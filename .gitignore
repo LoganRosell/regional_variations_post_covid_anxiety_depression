@@ -1,0 +1,13 @@
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Environment (Holds secrest)
+*.env
+
+# VS code settings
+.vscode/
+*.vdoc.*
+
+# Log files
+*.log
