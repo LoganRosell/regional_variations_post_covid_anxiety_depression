@@ -123,40 +123,63 @@ for indicator in national_avgs['Indicator'].unique():
         fontsize=10, 
         fontweight='bold'
     )
-# Draw vertical event lines
 events = [
-    (floyd_protests, '#1b9e77', '--', 'George Floyd Protests'),
-    (federal_election, '#d95f02', '-.', 'Federal Election'),
-    (covid_vaccine, '#7570b3', '--', 'Covid-19 Vaccine Approved'),
-    (roe_v_wade_overturned, '#e7298a', '-.', 'Roe V. Wade is Overturned'),
-    (us_mid_terms, '#66a61e', '--', 'Midterm Elections')
+    (floyd_protests, 'George Floyd Protests'),
+    (federal_election, 'Federal Election'),
+    (covid_vaccine, 'Covid-19 Vaccine Approved'),
+    (roe_v_wade_overturned, 'Roe V. Wade is Overturned'),
+    (us_mid_terms, 'Midterm Elections')
 ]
 
-for date, color, style, label in events:
-    plt.axvline(
+event_color = '#7f7f7f'  # Uniform neutral color for all event lines
+
+# 2. Draw lines and add numbered circular tags
+for idx, (date, label) in enumerate(events, start=1):
+    ax.axvline(
         date,
-        color=color,
-        label=label,
-        linestyle=style,
-        linewidth=2,
-        alpha=0.85
+        color=event_color,
+        linestyle='--',
+        linewidth=1.5,
+        alpha=0.75,
+        zorder=1
     )
+    
+    # Place a numbered badge at the top of each vertical line (transform y to axes coords)
+    ax.text(
+        x=date,
+        y=0.98,
+        s=str(idx),
+        transform=ax.get_xaxis_transform(),
+        color='white',
+        fontsize=8,
+        fontweight='bold',
+        ha='center',
+        va='center',
+        bbox=dict(
+            boxstyle='circle,pad=0.25',
+            facecolor=event_color,
+            edgecolor='none',
+            alpha=0.9
+        ),
+        zorder=5
+    )
+
 plt.xticks(rotation=45)
 plt.title(r"$\mathbf{Figure\ 1}$: Percent of Pop with Anxiety or Depression Over Time with Major Events Included")
 plt.ylabel('Percent of Population')
 
 
-handles, labels = ax.get_legend_handles_labels()
-exclude = {'Anxiety', 'Depression', 'Anxiety or Depression'}
-filtered_handles = [h for h, l in zip(handles, labels) if l not in exclude]
-filtered_labels = [textwrap.fill(l, width=30) for l in labels if l not in exclude]
+legend_labels = [f"[{i}]  {textwrap.fill(lbl, width=28)}" for i, (_, lbl) in enumerate(events, start=1)]
+
 ax.legend(
-    handles=filtered_handles,
-    labels=filtered_labels,
+    handles=[plt.Line2D([0], [0], color='none') for _ in events],  # invisible handles
+    labels=legend_labels,
     title='Events',
     loc='center left',
     bbox_to_anchor=(1.15, 0.2),
-    labelspacing=1.0
+    labelspacing=1.0,
+    handlelength=0,
+    handletextpad=0
 )
 
 fig = nat_avg_plt.get_figure()
