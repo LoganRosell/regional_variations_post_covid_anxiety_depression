@@ -120,6 +120,7 @@ plt.legend(title='Key',
 
 fig = nat_avg_plt.get_figure()
 
+plt.savefig("plots/fig_1_trends_over_time.png")
 plt.show()
 ```
 
@@ -202,6 +203,8 @@ regional_diff = sns.lineplot(state_data[state_data["Indicator"] == "Symptoms of 
     errorbar=None)
 regional_diff.set(title=r"$\mathbf{Figure\ 3}$: Combined Symptoms Over Time by Region")
 plt.xticks(rotation=45)
+
+plt.savefig("plots/fig_3_comparing_regions_over_time.png")
 plt.show()
 ```
 
@@ -252,6 +255,8 @@ fig = linear_plot.fig
 fig.suptitle(r"$\mathbf{Figure\ 4}$: Regression of Percent of Symptoms of Depression or Anxiety Over Time, by Region", fontsize=14)
 
 plt.tight_layout()
+
+plt.savefig("plots/fig_4_linear_reg_by_region.png")
 plt.show()
 ```
 
@@ -264,6 +269,8 @@ The findings of this linear regression model are consistent with our earlier obs
 display = PredictionErrorDisplay(y_true = y_data, y_pred = predict)
 display.plot()
 plt.title(r"$\mathbf{Figure\ 5}$: Residuals Plot of Linear Regression Model")
+
+plt.savefig("plots/fig_5_resid_plot.png")
 plt.show()
 
 # Does not meet criteria for linearity or equal variance (L, E)
@@ -278,6 +285,8 @@ residuals = np.ravel(residuals)
 
 probplot(residuals, dist = 'norm', plot = plt)
 plt.title(r"$\mathbf{Figure\ 6}$: Q-Q Plot of Linear Regression Model")
+
+plt.savefig("plots/fig_6_QQ_plot.png")
 plt.show()
 
 # Data looks fairly normally distributed (N)
