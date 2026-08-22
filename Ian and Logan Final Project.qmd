@@ -23,6 +23,7 @@ from sklearn.metrics import PredictionErrorDisplay
 from scipy.stats import probplot
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import datetime
+import textwrap
 
 # Import datasets
 state_data = pd.read_csv("state_data.csv")
@@ -80,45 +81,87 @@ covid_vaccine = datetime.datetime.strptime('Dec 11 2020', format)
 roe_v_wade_overturned = datetime.datetime.strptime('Jun 24 2022', format)
 us_mid_terms = datetime.datetime.strptime('Nov 8 2022', format)
 covid_over = datetime.datetime.strptime('May 11 2023', format)
+
+state_data['Time Period Start Date'] = pd.to_datetime(state_data['Time Period Start Date'])
+
 national_avgs = state_data.groupby(['Time Period Start Date', 'Indicator'], observed=False).agg(
     nat_means = ('Percent of Population', 'mean')
-)
-nat_avg_plt = sns.lineplot(national_avgs,
-                            x='Time Period Start Date',
-                            y='nat_means',
-                            hue = 'Indicator')
-plt.axvline(floyd_protests,
-    color='purple',
-    label='George Floyd Protests',
-    linestyle='--',)
-plt.axvline(federal_election,
-    color='red',
-    label='Federal Election',
-    linestyle='-.',)
-plt.axvline(covid_vaccine,
-    color='black',
-    label='Covid-19 Vaccine Approved',
-    linestyle=':',)
-plt.axvline(roe_v_wade_overturned,
-    color='blue',
-    label='Roe V. Wade is Overturned',
-    linestyle='--',)
-plt.axvline(us_mid_terms,
-    color='#06754cff',
-    label='Midterm Elections',
-    linestyle='-.',)
-plt.axvline(covid_over,
-    color='orange',
-    label='Covid-19 Public Health Emergency Over',
-    linestyle=':',)
+).reset_index()
+
+fig, ax = plt.subplots(figsize=(10, 6))
+
+custom_palette = {
+    'Anxiety': '#1f77b4',
+    'Anxiety or Depression': '#d95f02',
+    'Depression': '#2ca02c'
+}
+
+nat_avg_plt = sns.lineplot(
+    national_avgs,
+    x='Time Period Start Date',
+    y='nat_means',
+    hue = 'Indicator',
+    palette=custom_palette,
+    alpha=0.6,
+    linewidth=1,
+    ax=ax)
+
+last_date = national_avgs['Time Period Start Date'].max()
+offset = datetime.timedelta(days = 12)
+
+
+for indicator in national_avgs['Indicator'].unique():
+    subset = national_avgs[national_avgs['Indicator'] == indicator]
+    last_val = subset[subset['Time Period Start Date'] == last_date]['nat_means'].values[0]
+    
+    ax.text(
+        last_date + offset, 
+        last_val, 
+        indicator, 
+        color=custom_palette[indicator],
+        va='center', 
+        fontsize=10, 
+        fontweight='bold'
+    )
+# Draw vertical event lines
+events = [
+    (floyd_protests, '#1b9e77', '--', 'George Floyd Protests'),
+    (federal_election, '#d95f02', '-.', 'Federal Election'),
+    (covid_vaccine, '#7570b3', '--', 'Covid-19 Vaccine Approved'),
+    (roe_v_wade_overturned, '#e7298a', '-.', 'Roe V. Wade is Overturned'),
+    (us_mid_terms, '#66a61e', '--', 'Midterm Elections')
+]
+
+for date, color, style, label in events:
+    plt.axvline(
+        date,
+        color=color,
+        label=label,
+        linestyle=style,
+        linewidth=1.3,
+        alpha=0.85
+    )
 plt.xticks(rotation=45)
 plt.title(r"$\mathbf{Figure\ 1}$: Percent of Pop with Anxiety or Depression Over Time with Major Events Included")
 plt.ylabel('Percent of Population')
-plt.legend(title='Key',
-    loc='right',
-    bbox_to_anchor=(1.7, 0.5))
+
+
+handles, labels = ax.get_legend_handles_labels()
+exclude = {'Anxiety', 'Depression', 'Anxiety or Depression'}
+filtered_handles = [h for h, l in zip(handles, labels) if l not in exclude]
+filtered_labels = [textwrap.fill(l, width=30) for l in labels if l not in exclude]
+ax.legend(
+    handles=filtered_handles,
+    labels=filtered_labels,
+    title='Events',
+    loc='center left',
+    bbox_to_anchor=(1.1, 0.2),
+    labelspacing=1.0
+)
 
 fig = nat_avg_plt.get_figure()
+
+sns.despine(ax=ax, top=True, right=True)
 
 plt.savefig("plots/fig_1_trends_over_time.png", bbox_inches='tight', dpi=300)
 plt.show()
