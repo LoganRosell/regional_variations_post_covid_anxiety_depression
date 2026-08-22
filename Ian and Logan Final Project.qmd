@@ -120,7 +120,7 @@ plt.legend(title='Key',
 
 fig = nat_avg_plt.get_figure()
 
-plt.savefig("plots/fig_1_trends_over_time.png")
+plt.savefig("plots/fig_1_trends_over_time.png", bbox_inches='tight', dpi=300)
 plt.show()
 ```
 
