@@ -116,7 +116,7 @@ plt.title(r"$\mathbf{Figure\ 1}$: Percent of Pop with Anxiety or Depression Over
 plt.ylabel('Percent of Population')
 plt.legend(title='Key',
     loc='right',
-    bbox_to_anchor=(1.9, 0.5))
+    bbox_to_anchor=(1.7, 0.5))
 
 fig = nat_avg_plt.get_figure()
 
@@ -166,7 +166,7 @@ plt.title("Percent of Pop with Anxiety or Depression Over Time ")
 plt.ylabel('Percent of Population')
 plt.legend(title='Key',
     loc='right',
-    bbox_to_anchor=(1.9, 0.5))
+    bbox_to_anchor=(1.5, 0.5))
 plt.show()
 ```
 
@@ -196,7 +196,7 @@ fig.show()
 
 ```{python}
 #| echo: false
-regional_diff = sns.lineplot(state_data[state_data["Indicator"] == "Symptoms of Anxiety Disorder or Depressive Disorder"],
+regional_diff = sns.lineplot(state_data[state_data["Indicator"] == "Anxiety or Depression"],
     x="Time Period Start Date",
     y="Percent of Population",
     hue="Region",

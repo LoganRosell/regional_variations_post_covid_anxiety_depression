@@ -207,6 +207,18 @@ dummies = pd.get_dummies(state_data_wide['Region'], prefix='Region', drop_first=
 state_data_wide = pd.concat([state_data_wide, dummies], axis=1)
 ```
 
+```{python}
+# shorten indicator names to make plotting cleaner later
+
+# Ensure the column allows new string assignments
+state_data["Indicator"] = state_data["Indicator"].astype(str)
+
+# Update values in order (check 'or' first before replacing 'Anxiety')
+state_data.loc[state_data["Indicator"].str.contains(r" or "), "Indicator"] = "Anxiety or Depression"
+state_data.loc[state_data["Indicator"].str.contains(r"Depressive"), "Indicator"] = "Depression"
+state_data.loc[state_data["Indicator"].str.contains(r"Anxiety Disorder"), "Indicator"] = "Anxiety"
+```
+
 ## Export Dataset
 
 ```{python}
